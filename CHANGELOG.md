@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1 (17 Nov 2026)
+JARVIS gets ready as soon as you open the app
+- Opening the app, or starting a conversation, asks JARVIS to load its brain and read the conversation while you're still talking, so the first answer after a quiet spell comes much sooner (needs JARVIS 0.9.1)
+
 ## 0.3.0 (17 Nov 2026)
 Talk to JARVIS like a conversation: it knows when you've finished, and you can cut in
 - Tap once and it listens; it ends your turn from your pause and whether what you said sounds finished (quick after a complete sentence, patient after "and" or "um"), answers, and listens again until you tap End

@@ -50,6 +50,17 @@ final class Talk: ObservableObject {
         engine.onLevel = { [weak self] lv in Task { @MainActor in self?.latest = lv } }
     }
 
+    // ---------------------------------------------------------------- getting JARVIS ready
+    private static var warmedAt = Date.distantPast
+
+    /// Ask JARVIS to load its brain (if it was unloaded) and read the conversation now, while he's still opening the
+    /// app or talking, rather than after his question arrives. At most every 20 seconds.
+    static func warm() {
+        guard Pairing.shared.isPaired, Date().timeIntervalSince(warmedAt) > 20 else { return }
+        warmedAt = Date()
+        Task { _ = try? await Client.call("api/warm", method: "POST") }
+    }
+
     // ---------------------------------------------------------------- the conversation
     func toggle() {
         if session { endSession() } else { Task { await startSession() } }
@@ -57,6 +68,7 @@ final class Talk: ObservableObject {
 
     func startSession() async {
         guard !session else { return }
+        Talk.warm()
         guard await AudioSession.microphoneAllowed() else {
             hint = "JARVIS needs the microphone: Settings → JARVIS → Microphone."
             return
