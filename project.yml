@@ -1,0 +1,39 @@
+# The Xcode project is generated from this file by XcodeGen (`brew install xcodegen`, then `xcodegen` here),
+# on the Mac and in Xcode Cloud (ci_scripts/ci_post_clone.sh), so the project itself isn't kept in git.
+name: JARVIS
+options:
+  bundleIdPrefix: com.aryakvsathye
+  deploymentTarget:
+    iOS: "18.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    DEVELOPMENT_TEAM: "TEAM_ID_HERE"   # Aryak's team ID, from developer.apple.com → Membership
+    CODE_SIGN_STYLE: Automatic
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"       # Xcode Cloud sets the build number for each build
+targets:
+  JARVIS:
+    type: application
+    platform: iOS
+    sources:
+      - path: JARVIS
+    info:
+      path: JARVIS/Info.plist
+      properties:
+        CFBundleDisplayName: JARVIS
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSMicrophoneUsageDescription: JARVIS listens when you tap to talk, and only then.
+        UIBackgroundModes: [audio]
+        UILaunchScreen:
+          UIColorName: ""
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+        UIUserInterfaceStyle: Dark
+        ITSAppUsesNonExemptEncryption: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.aryakvsathye.jarvis
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon

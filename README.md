@@ -1,3 +1,27 @@
 # JARVIS for iPhone
 
-The iPhone (and later Apple Watch) app for JARVIS, the private assistant on the Mac.
+The iPhone app for JARVIS, the private assistant on the Mac. It talks only to JARVIS's own address on the tailnet.
+(The Apple Watch app and the Live Activity come next.)
+
+## What it does
+
+- **Pairing, once.** On JARVIS's page: ⋯ → Pair the iPhone App, confirm with your passkey, and type the address and code it shows into the app. The app makes a key in the phone's Secure Enclave and signs every request with it; the key never leaves the phone. (Passkeys aren't used inside the app: they need Apple's servers to reach JARVIS's address, which is only on your tailnet.)
+- **The orb.** Tap to talk. It listens until a 10-second pause, answers aloud (through AirPods when they're in), and listens again; tap to end. Typing works too.
+- **Your voice, on this phone.** JARVIS keeps a voiceprint per device. The first time you talk in the app, it asks to be taught: eight short phrases.
+- **Talk to JARVIS from anywhere.** "Hey Siri, JARVIS" (or "Talk to JARVIS"), and the same shortcut for Back Tap: Settings → Accessibility → Touch → Back Tap → Double Tap → Talk to JARVIS. Control Centre and Lock Screen buttons can use it from the Shortcuts app; built-in ones come with the next version.
+- **The Duo.** Folded, the orb sits above the conversation; unfolded, side by side.
+
+## Building
+
+The Xcode project is made from `project.yml` by XcodeGen, on the Mac and in Xcode Cloud (`ci_scripts/ci_post_clone.sh`), so it isn't kept in git.
+
+One-time setup on the Mac:
+
+1. `brew install xcodegen`, then in this repo: `xcodegen` and `open JARVIS.xcodeproj`.
+2. In Xcode, select the JARVIS target → Signing & Capabilities → Team: your team. (`DEVELOPMENT_TEAM` in `project.yml` holds the team ID, so Xcode Cloud signs with it too.)
+3. Product → Xcode Cloud → Create Workflow. Start condition: changes to `main`. Action: Archive, iOS. Post-action: TestFlight Internal Testing, to a group with you in it. Xcode creates the app in App Store Connect if it isn't there.
+4. On the phone, install TestFlight, accept the invitation, and turn on **Automatic Updates** for JARVIS. From then on, every merge to `main` is built and installed on your phone without you doing anything.
+
+## Versions
+
+`VERSION` and `MARKETING_VERSION` in `project.yml` move together; Xcode Cloud numbers each build itself.
