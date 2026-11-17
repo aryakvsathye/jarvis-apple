@@ -11,7 +11,7 @@ settings:
     SWIFT_VERSION: "5.0"
     DEVELOPMENT_TEAM: "TEAM_ID_HERE"   # Aryak's team ID, from developer.apple.com → Membership
     CODE_SIGN_STYLE: Automatic
-    MARKETING_VERSION: "0.1.1"
+    MARKETING_VERSION: "0.2.0"
     CURRENT_PROJECT_VERSION: "1"       # Xcode Cloud sets the build number for each build
 targets:
   JARVIS:
@@ -26,6 +26,7 @@ targets:
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         NSMicrophoneUsageDescription: JARVIS listens when you tap to talk, and only then.
+        NSLocationWhenInUseUsageDescription: JARVIS asks where you are only when you ask where you are, or about the weather without naming a place. Your Mac turns it into a town and keeps only that.
         UIBackgroundModes: [audio]
         UILaunchScreen:
           UIColorName: ""
