@@ -138,22 +138,21 @@ final class Pairing {
         Keychain.set(k.stored, for: "key")
         Keychain.set(Data(base.absoluteString.utf8), for: "base")
         Keychain.set(Data(dev.utf8), for: "device")
-        lock.lock(); key = k; lastMs = 0; lock.unlock()
+        lock.withLock { key = k; lastMs = 0 }
     }
 
     func unpair() {
         Keychain.remove("key"); Keychain.remove("base"); Keychain.remove("device")
-        lock.lock(); key = nil; lock.unlock()
+        lock.withLock { key = nil }
     }
 
     /// Adds the app's id, a millisecond time (always later than the last one) and the signature to a request.
     func sign(_ req: inout URLRequest) throws {
         guard let k = key, let dev = device, let url = req.url else { throw PairingError.refused("This app isn't paired with JARVIS.") }
-        lock.lock()
-        let now = Int64(Date().timeIntervalSince1970 * 1000)
-        lastMs = max(now, lastMs + 1)
-        let ms = lastMs
-        lock.unlock()
+        let ms: Int64 = lock.withLock {
+            lastMs = max(Int64(Date().timeIntervalSince1970 * 1000), lastMs + 1)
+            return lastMs
+        }
         let method = (req.httpMethod ?? "GET").uppercased()
         let message = "\(method)\n\(url.path)\n\(ms)\n\(dev)"
         let sig = try k.sign(Data(message.utf8))
