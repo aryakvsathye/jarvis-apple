@@ -26,6 +26,7 @@ final class Talk: ObservableObject {
     @Published var deviceName = "iPhone"
 
     var session = false
+    private var answering = false   // JARVIS's answer is still arriving: a gap between its sentences isn't the end
     private let recorder = Recorder()
     private let speaker = Speaker()
     private var timer: Timer?
@@ -127,6 +128,7 @@ final class Talk: ObservableObject {
     }
 
     func ask(_ text: String) async {
+        answering = true
         lines.append(Line(who: .him, text: text))
         var reply = Line(who: .jarvis, text: "")
         lines.append(reply)
@@ -159,12 +161,13 @@ final class Talk: ObservableObject {
             reply.text = error.localizedDescription; lines[index] = reply
         }
         if let f = firstWord { reply.timing = String(format: "first word %.1f s", f); lines[index] = reply }
-        if !speaker.isSpeaking { answered() }
+        answering = false
+        if !speaker.isSpeaking { answered() }   // otherwise the last sentence ends it, when it finishes playing
     }
 
     /// After an answer (or nothing to answer): listen again if the session is on.
     private func answered() {
-        guard !speaker.isSpeaking else { return }
+        guard !speaker.isSpeaking, !answering else { return }   // between two sentences: more is on its way
         if session { listen() } else { phase = .idle; if hint == "Speaking…" || hint == "Thinking…" { hint = "Tap to talk" } }
     }
 

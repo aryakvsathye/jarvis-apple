@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2 (17 Nov 2026)
+JARVIS finishes his answer before you're asked to talk again
+- A pause between two of his sentences no longer counts as the end of the answer, so the app stays "Speaking…" instead of flicking to "Tap to talk" (or listening) mid-answer
+
 ## 0.2.1 (17 Nov 2026)
 Starting to listen no longer risks a frozen screen
 - The audio session is set up and switched on off the main thread, as Xcode advised
