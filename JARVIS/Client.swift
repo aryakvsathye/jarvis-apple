@@ -33,11 +33,17 @@ enum Client {
 
     /// Asking: JARVIS's answer arrives line by line (its words, a spoken sentence as audio, which tool it used,
     /// and finally "done"), so it can be shown and spoken while the rest is still being written.
-    static func ask(_ text: String, speak: Bool = true) -> AsyncThrowingStream<[String: Any], Error> {
+    /// `where` is the phone's position when the question needs it: sent as {"lat", "lon"}, or false when the phone
+    /// couldn't or wouldn't say (JARVIS then tells him so), and left out when the question doesn't need it.
+    static func ask(_ text: String, speak: Bool = true, where position: (lat: Double, lon: Double)?? = nil) -> AsyncThrowingStream<[String: Any], Error> {
         AsyncThrowingStream { go in
             let task = Task {
                 do {
-                    let body = try JSONSerialization.data(withJSONObject: ["text": text, "speak": speak])
+                    var fields: [String: Any] = ["text": text, "speak": speak]
+                    if let asked = position {
+                        fields["where"] = asked.map { ["lat": $0.lat, "lon": $0.lon] as Any } ?? false
+                    }
+                    let body = try JSONSerialization.data(withJSONObject: fields)
                     let req = try request("api/ask", method: "POST", body: body, type: "application/json")
                     let (bytes, resp) = try await URLSession.shared.bytes(for: req)
                     let status = (resp as? HTTPURLResponse)?.statusCode ?? 0

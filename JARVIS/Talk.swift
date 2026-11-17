@@ -132,10 +132,16 @@ final class Talk: ObservableObject {
         lines.append(reply)
         let index = lines.count - 1
         phase = .thinking; hint = "Thinking…"
+        // where he is goes with every question; one about where he is (or the weather here) gets a fresh position
+        let fresh = Location.needed(for: text)
+        if fresh { hint = "Checking where you are…" }
+        let fix = await Location.shared.now(fresh: fresh ? 600 : 3600, wait: fresh ? 8 : 2)
+        let position: (lat: Double, lon: Double)?? = .some(fix.map { (lat: $0.coordinate.latitude, lon: $0.coordinate.longitude) })
+        hint = "Thinking…"
         let sent = Date()
         var firstWord: TimeInterval?
         do {
-            for try await ev in Client.ask(text) {
+            for try await ev in Client.ask(text, where: position) {
                 if let tool = ev["tool"] as? String {
                     reply.tool = Talk.toolLabel(tool); lines[index] = reply
                 }

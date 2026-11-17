@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.0 (17 Nov 2026)
+JARVIS always knows where you are, in the app
+- Every question carries the phone's rough location (about a kilometre); the Mac turns it into a town and keeps only that
+- Location permission is "Always": iOS's low-power significant-change tracking keeps a recent position ready, so questions don't wait for a fix ("where am I?" and the weather here still get a fresh one)
+
 ## 0.1.1 (16 Nov 2026)
 The app builds without warnings
 - Bluetooth headsets use the option's current name, and the request counter locks safely inside async code (Swift 6 ready)
