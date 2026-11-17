@@ -26,7 +26,8 @@ targets:
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         NSMicrophoneUsageDescription: JARVIS listens when you tap to talk, and only then.
-        NSLocationWhenInUseUsageDescription: JARVIS asks where you are only when you ask where you are, or about the weather without naming a place. Your Mac turns it into a town and keeps only that.
+        NSLocationWhenInUseUsageDescription: JARVIS sends your rough location with each question, so it knows where you are. Your Mac turns it into a town and keeps only that.
+        NSLocationAlwaysAndWhenInUseUsageDescription: With Always, JARVIS keeps a rough position ready (updated only when you move a fair way), so answers don't wait for a fix. Your Mac turns it into a town and keeps only that.
         UIBackgroundModes: [audio]
         UILaunchScreen:
           UIColorName: ""

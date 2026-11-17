@@ -4,7 +4,7 @@ import SwiftUI
 @main
 struct JARVISApp: App {
     var body: some Scene {
-        WindowGroup { RootView() }
+        WindowGroup { RootView().task { Location.shared.start() } }
     }
 }
 
