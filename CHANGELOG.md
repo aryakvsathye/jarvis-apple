@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0 (17 Nov 2026)
+Talk to JARVIS like a conversation: it knows when you've finished, and you can cut in
+- Tap once and it listens; it ends your turn from your pause and whether what you said sounds finished (quick after a complete sentence, patient after "and" or "um"), answers, and listens again until you tap End
+- Talk over JARVIS to interrupt: it stops, drops the rest of the answer and listens to you. Echo cancellation (iOS's voice processing, as in FaceTime) keeps its own voice out of the microphone
+- Your words appear as you say them, recognised on the phone itself (never sent to Apple)
+- Teach JARVIS your voice again once on this phone: the conversation microphone sounds different with echo cancellation
+
 ## 0.2.2 (17 Nov 2026)
 JARVIS finishes his answer before you're asked to talk again
 - A pause between two of his sentences no longer counts as the end of the answer, so the app stays "Speaking…" instead of flicking to "Tap to talk" (or listening) mid-answer

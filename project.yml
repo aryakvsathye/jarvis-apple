@@ -11,7 +11,7 @@ settings:
     SWIFT_VERSION: "5.0"
     DEVELOPMENT_TEAM: "TEAM_ID_HERE"   # Aryak's team ID, from developer.apple.com → Membership
     CODE_SIGN_STYLE: Automatic
-    MARKETING_VERSION: "0.2.2"
+    MARKETING_VERSION: "0.3.0"
     CURRENT_PROJECT_VERSION: "1"       # Xcode Cloud sets the build number for each build
 targets:
   JARVIS:
@@ -25,7 +25,8 @@ targets:
         CFBundleDisplayName: JARVIS
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
-        NSMicrophoneUsageDescription: JARVIS listens when you tap to talk, and only then.
+        NSMicrophoneUsageDescription: JARVIS listens when you tap to talk, until you end the conversation.
+        NSSpeechRecognitionUsageDescription: Your words are recognised on this iPhone, never sent to Apple, only to tell when you've finished speaking.
         NSLocationWhenInUseUsageDescription: JARVIS sends your rough location with each question, so it knows where you are. Your Mac turns it into a town and keeps only that.
         NSLocationAlwaysAndWhenInUseUsageDescription: With Always, JARVIS keeps a rough position ready (updated only when you move a fair way), so answers don't wait for a fix. Your Mac turns it into a town and keeps only that.
         UIBackgroundModes: [audio]

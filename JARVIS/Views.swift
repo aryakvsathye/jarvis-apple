@@ -121,9 +121,19 @@ struct TalkView: View {
                 .frame(width: 220, height: 220)
                 .contentShape(Circle())
                 .onTapGesture { talk.toggle() }
-                .accessibilityLabel(talk.session ? "End talking" : "Talk to JARVIS")
+                .accessibilityLabel(talk.session ? "End the conversation" : "Talk to JARVIS")
                 .accessibilityAddTraits(.isButton)
             Text(talk.hint).font(.subheadline).foregroundStyle(dim).multilineTextAlignment(.center).padding(.horizontal)
+            if !talk.heard.isEmpty {   // his words as he says them
+                Text(talk.heard).font(.body).foregroundStyle(.white.opacity(0.85)).multilineTextAlignment(.center)
+                    .lineLimit(3).padding(.horizontal, 24).transition(.opacity)
+            }
+            if talk.session {
+                Button(role: .destructive) { talk.endSession() } label: {
+                    Label("End", systemImage: "xmark").padding(.horizontal, 18).padding(.vertical, 8)
+                }
+                .buttonStyle(.bordered).tint(.red).accessibilityLabel("End the conversation")
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -160,7 +170,7 @@ struct TalkView: View {
         let t = typing.trimmingCharacters(in: .whitespaces)
         guard !t.isEmpty else { return }
         typing = ""
-        Task { await talk.ask(t) }
+        talk.send(t)
     }
 }
 
