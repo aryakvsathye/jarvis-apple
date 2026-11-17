@@ -54,7 +54,7 @@ final class Talk: ObservableObject {
             hint = "JARVIS needs the microphone: Settings → JARVIS → Microphone."
             return
         }
-        do { try AudioSession.start() } catch { hint = error.localizedDescription; return }
+        do { try await AudioSession.start() } catch { hint = error.localizedDescription; return }
         session = true
         lastHeard = Date()
         listen()
@@ -186,7 +186,7 @@ final class Talk: ObservableObject {
         if session { endSession() }
         guard await AudioSession.microphoneAllowed() else { return (false, 0, "JARVIS needs the microphone: Settings → JARVIS → Microphone.") }
         do {
-            try AudioSession.start()
+            try await AudioSession.start()
             if first { _ = try await Client.call("api/voice/start", method: "POST") }
             try recorder.start()
             try await Task.sleep(nanoseconds: 4_200_000_000)

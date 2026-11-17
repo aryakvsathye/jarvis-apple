@@ -3,11 +3,17 @@ import Foundation
 
 /// The phone's audio: one session for listening and speaking. Answers play through AirPods when they're in.
 enum AudioSession {
-    static func start() throws {
-        let s = AVAudioSession.sharedInstance()
-        try s.setCategory(.playAndRecord, mode: .default,
-                          options: [.defaultToSpeaker, .allowBluetoothHFP, .allowBluetoothA2DP])
-        try s.setActive(true)
+    /// Set up and switch on the session away from the main thread: these calls can block for a moment, and on the
+    /// main thread that would freeze the screen.
+    static func start() async throws {
+        try await Task.detached(priority: .userInitiated) {
+            let s = AVAudioSession.sharedInstance()
+            if s.category != .playAndRecord {
+                try s.setCategory(.playAndRecord, mode: .default,
+                                  options: [.defaultToSpeaker, .allowBluetoothHFP, .allowBluetoothA2DP])
+            }
+            try s.setActive(true)
+        }.value
     }
 
     static func microphoneAllowed() async -> Bool {
