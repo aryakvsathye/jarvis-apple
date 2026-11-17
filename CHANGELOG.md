@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1 (17 Nov 2026)
+Starting to listen no longer risks a frozen screen
+- The audio session is set up and switched on off the main thread, as Xcode advised
+
 ## 0.2.0 (17 Nov 2026)
 JARVIS always knows where you are, in the app
 - Every question carries the phone's rough location (about a kilometre); the Mac turns it into a town and keeps only that
