@@ -17,6 +17,9 @@ The Xcode project is made from `project.yml` by XcodeGen, on the Mac and in Xcod
 
 One-time setup on the Mac:
 
+**The quick way:** `~/jarvis-apple/scripts/rebuild.sh`. It pulls the latest from GitHub, makes the project, builds, signs, installs on the phone (unlocked, by cable or on the same Wi-Fi) and opens JARVIS. Run it again whenever you merge an app PR, and every 7 days while on free signing. `--open` opens Xcode instead; `--team` chooses the signing team again.
+
+**By hand:**
 1. `brew install xcodegen`, then in this repo: `xcodegen` and `open JARVIS.xcodeproj`.
 2. In Xcode, select the JARVIS target → Signing & Capabilities → Team: your team. (`DEVELOPMENT_TEAM` in `project.yml` holds the team ID, so Xcode Cloud signs with it too.)
 3. Product → Xcode Cloud → Create Workflow. Start condition: changes to `main`. Action: Archive, iOS. Post-action: TestFlight Internal Testing, to a group with you in it. Xcode creates the app in App Store Connect if it isn't there.

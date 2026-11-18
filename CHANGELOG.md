@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.2 (17 Nov 2026)
+One command to get the latest app onto the iPhone
+- scripts/rebuild.sh pulls from GitHub, makes the Xcode project, builds, signs, installs on the phone and opens JARVIS, without opening Xcode
+- The signing team is found from the Mac's certificate (or asked once) and kept on the Mac, not in git; --open opens Xcode instead, --team picks the team again
+
 ## 0.3.1 (17 Nov 2026)
 JARVIS gets ready as soon as you open the app
 - Opening the app, or starting a conversation, asks JARVIS to load its brain and read the conversation while you're still talking, so the first answer after a quiet spell comes much sooner (needs JARVIS 0.9.1)
