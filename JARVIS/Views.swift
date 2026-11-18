@@ -20,6 +20,7 @@ struct RootView: View {
         }
         .onAppear {
             if launch.wantsTalk && paired { launch.wantsTalk = false; Task { await talk.startSession() } }
+            else if paired { Task { await talk.resumeStandby() } }
         }
     }
 }
@@ -111,6 +112,9 @@ struct TalkView: View {
             Spacer()
             Menu {
                 Button("Teach JARVIS My Voice on This \(talk.deviceName)") { showTeach = true }
+                Button(talk.standby ? "Stop Standing By" : "Stand By for “JARVIS”") {
+                    Task { await talk.setStandby(!talk.standby) }
+                }
                 Button("Car") { showCar = true }
                 Button("Unpair This App", role: .destructive) { confirmUnpair = true }
             } label: { Image(systemName: "ellipsis").foregroundStyle(dim).padding(8) }
