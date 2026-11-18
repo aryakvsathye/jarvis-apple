@@ -10,6 +10,7 @@ The iPhone app for JARVIS, the private assistant on the Mac. It talks only to JA
 - **Your voice, on this phone.** JARVIS keeps a voiceprint per device. The first time you talk in the app, it asks to be taught: eight short phrases.
 - **Talk to JARVIS from anywhere.** "Hey Siri, JARVIS" (or "Talk to JARVIS"), and the same shortcut for Back Tap: Settings → Accessibility → Touch → Back Tap → Double Tap → Talk to JARVIS. Control Centre and Lock Screen buttons can use it from the Shortcuts app; built-in ones come with the next version.
 - **The Duo.** Folded, the orb sits above the conversation; unfolded, side by side.
+- **The car.** JARVIS is the only app that talks to the car's OBD-II adapter (a Vgate iCar Pro 2S). Set it up once with the car on: ⋯ → Car → Set Up the Adapter, and choose it (it's called something like "IOS-Vlink"). First stop Pelican connecting to it, and don't pair it in iOS's Bluetooth settings. From then on iOS connects to it by itself whenever the car is on, even with the app closed, and JARVIS reads the speed, fuel level, engine temperature, battery voltage and any trouble codes. When you switch off, the trip goes to JARVIS on the Mac (one that can't be sent yet waits for the next). No position is sent. Ask "how's my car?" or "how far did I drive?"
 
 ## Building
 

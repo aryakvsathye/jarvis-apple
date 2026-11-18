@@ -269,7 +269,7 @@ final class Talk: ObservableObject {
                     "change_setting": "change a setting"]
         if let a = acts[name] { return "Asked the Command Centre to " + a }
         let checks = ["server_status": "the server", "current_time": "the time", "thinking": "it through carefully",
-                      "web_search": "the web", "weather": "the weather", "news": "the news"]
+                      "web_search": "the web", "weather": "the weather", "news": "the news", "car": "the car"]
         return "Checked " + (checks[name] ?? name.replacingOccurrences(of: "_", with: " "))
     }
 

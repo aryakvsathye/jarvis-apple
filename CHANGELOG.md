@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0 (17 Nov 2026)
+JARVIS reads your car: every trip, straight from the OBD-II adapter
+- ⋯ → Car: choose the adapter once, with the car on. iOS then connects to it by itself whenever the car is on, even with the app closed
+- While you drive, JARVIS reads the speed, fuel level, engine temperature, battery voltage, the check-engine light and any trouble codes; when you switch off, the trip goes to your Mac (needs JARVIS 0.11.0)
+- A trip that can't be sent (no signal) waits and goes with the next one. No position is sent
+
 ## 0.3.2 (17 Nov 2026)
 One command to get the latest app onto the iPhone
 - scripts/rebuild.sh pulls from GitHub, makes the Xcode project, builds, signs, installs on the phone and opens JARVIS, without opening Xcode
