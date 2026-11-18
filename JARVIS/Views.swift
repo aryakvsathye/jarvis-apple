@@ -76,6 +76,7 @@ struct TalkView: View {
     @Binding var paired: Bool
     @State private var typing = ""
     @State private var showTeach = false
+    @State private var showCar = false
     @State private var confirmUnpair = false
 
     var body: some View {
@@ -97,6 +98,7 @@ struct TalkView: View {
             }
         }
         .sheet(isPresented: $showTeach) { TeachView(talk: talk) }
+        .sheet(isPresented: $showCar) { CarView() }
         .onChange(of: talk.mustTeach) { _, must in if must { showTeach = true } }
         .confirmationDialog("Unpair this app from JARVIS?", isPresented: $confirmUnpair, titleVisibility: .visible) {
             Button("Unpair", role: .destructive) { talk.endSession(); Pairing.shared.unpair(); paired = false }
@@ -109,6 +111,7 @@ struct TalkView: View {
             Spacer()
             Menu {
                 Button("Teach JARVIS My Voice on This \(talk.deviceName)") { showTeach = true }
+                Button("Car") { showCar = true }
                 Button("Unpair This App", role: .destructive) { confirmUnpair = true }
             } label: { Image(systemName: "ellipsis").foregroundStyle(dim).padding(8) }
         }
@@ -259,6 +262,47 @@ struct TeachView: View {
             if r.done { have = Talk.phrases.count } else if r.have >= 0 { have = r.have }
             note = r.note
             busy = false
+        }
+    }
+}
+
+
+// ---------------------------------------------------------------- the car's OBD-II adapter
+struct CarView: View {
+    @ObservedObject private var car = Car.shared
+    @State private var confirmForget = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            Text("Car").font(.title3.weight(.semibold)).foregroundStyle(.white)
+            Text(car.status).foregroundStyle(.white)
+            if let sent = car.lastSent { Text(sent).font(.footnote).foregroundStyle(dim) }
+            Text("JARVIS reads your car through its OBD-II adapter whenever the car is on, even with the app closed, and "
+                 + "sends each trip to your Mac when you switch off. Ask him about the car any time. Only JARVIS connects "
+                 + "to the adapter: keep Pelican from connecting to it.")
+                .font(.footnote).foregroundStyle(dim)
+            if !car.choices.isEmpty {
+                Text("Choose your adapter:").foregroundStyle(dim)
+                ForEach(car.choices, id: \.identifier) { p in
+                    Button(p.name ?? "Adapter") { car.use(p) }
+                        .frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 6)
+                }
+            }
+            Spacer()
+            Button(action: { car.choose() }) {
+                Text(car.isSetUp ? "Choose the Adapter Again" : "Set Up the Adapter").frame(maxWidth: .infinity).padding(.vertical, 14)
+            }
+            .buttonStyle(.borderedProminent).tint(arc)
+            if car.isSetUp {
+                Button("Forget the Adapter", role: .destructive) { confirmForget = true }
+                    .frame(maxWidth: .infinity)
+            }
+        }
+        .padding(24)
+        .background(ink.ignoresSafeArea())
+        .preferredColorScheme(.dark)
+        .confirmationDialog("Forget the car's adapter?", isPresented: $confirmForget, titleVisibility: .visible) {
+            Button("Forget", role: .destructive) { car.forget() }
         }
     }
 }

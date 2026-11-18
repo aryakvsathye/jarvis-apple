@@ -6,7 +6,7 @@ struct JARVISApp: App {
     @Environment(\.scenePhase) private var phase
 
     var body: some Scene {
-        WindowGroup { RootView().task { Location.shared.start() } }
+        WindowGroup { RootView().task { Location.shared.start(); Car.shared.start() } }
             .onChange(of: phase) { _, now in if now == .active { Talk.warm() } }
     }
 }
