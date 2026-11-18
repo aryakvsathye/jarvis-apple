@@ -26,6 +26,11 @@ final class Talk: ObservableObject {
     @Published var mustTeach = false
     @Published var deviceName = "iPhone"
     @Published private(set) var session = false
+    /// Stand by: listening, on the phone only, for "JARVIS"; hearing it starts a conversation without a tap. Kept on
+    /// across launches. Needs on-phone speech recognition (nothing leaves the phone until he's said "JARVIS").
+    @Published private(set) var standby = UserDefaults.standard.bool(forKey: "standby")
+    private var wakeStarted = Date()
+    static let wakeSegment: TimeInterval = 45   // on-phone recognition stops after about a minute: start a fresh one
 
     private let engine = Engine.shared
     private let speaker = Speaker()           // for answers to typed questions outside a conversation
@@ -61,6 +66,75 @@ final class Talk: ObservableObject {
         Task { _ = try? await Client.call("api/warm", method: "POST") }
     }
 
+    // ---------------------------------------------------------------- standing by for "JARVIS"
+    func setStandby(_ on: Bool) async {
+        UserDefaults.standard.set(on, forKey: "standby")
+        standby = on
+        if !on {
+            if !session { stopAudio(); hint = "Tap to talk" }
+            return
+        }
+        guard await AudioSession.microphoneAllowed() else {
+            standby = false; UserDefaults.standard.set(false, forKey: "standby")
+            hint = "JARVIS needs the microphone: Settings → JARVIS → Microphone."
+            return
+        }
+        await words.authorise()
+        guard words.available else {
+            standby = false; UserDefaults.standard.set(false, forKey: "standby")
+            hint = "Stand by needs speech recognition on this phone: Settings → JARVIS → Speech Recognition."
+            return
+        }
+        if !session { await startAudio(); waitForName() }
+    }
+
+    /// Resume standing by after a launch, if it was on.
+    func resumeStandby() async {
+        if standby && !session { await setStandby(true) }
+    }
+
+    private func startAudio() async {
+        do {
+            try await AudioSession.start()
+            try engine.start()
+        } catch { hint = error.localizedDescription; return }
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { [weak self] _ in
+            Task { @MainActor in self?.tick() }
+        }
+    }
+
+    private func stopAudio() {
+        timer?.invalidate(); timer = nil
+        words.finish()
+        engine.stop()
+        level = 0
+    }
+
+    private func waitForName() {
+        guard standby, !session else { return }
+        phase = .idle
+        hint = "Standing by. Say “JARVIS”."
+        engine.discardCapture()
+        engine.beginCapture(transcribing: words.begin())
+        wakeStarted = Date()
+    }
+
+    /// While standing by, twenty times a second: did he say "JARVIS"? (Recognised on the phone; the recording is
+    /// thrown away and started afresh every 45 seconds, so nothing builds up.)
+    private func standbyTick() {
+        let said = words.text.lowercased()
+        if said.contains("jarvis") {
+            words.finish(); engine.discardCapture()
+            Talk.warm()
+            session = true
+            lastHeard = Date()
+            listen()
+            return
+        }
+        if Date().timeIntervalSince(wakeStarted) > Talk.wakeSegment { waitForName() }
+    }
+
     // ---------------------------------------------------------------- the conversation
     func toggle() {
         if session { endSession() } else { Task { await startSession() } }
@@ -74,26 +148,26 @@ final class Talk: ObservableObject {
             return
         }
         await words.authorise()
-        do {
-            try await AudioSession.start()
-            try engine.start()
-        } catch { hint = error.localizedDescription; return }
+        if !engine.running || timer == nil {
+            await startAudio()
+            guard engine.running else { return }
+        }
+        words.finish(); engine.discardCapture()   // stop listening for the name: this is the conversation
         session = true
         lastHeard = Date()
         listen()
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { [weak self] _ in
-            Task { @MainActor in self?.tick() }
-        }
     }
 
     func endSession() {
         session = false
-        timer?.invalidate(); timer = nil
         answerTask?.cancel(); answerTask = nil
-        words.finish()
-        engine.stop()
         hearing = false; heard = ""; level = 0
+        if standby && engine.running {   // back to standing by, with the microphone still open
+            words.finish()
+            waitForName()
+            return
+        }
+        stopAudio()
         phase = .idle; hint = "Tap to talk"
     }
 
@@ -108,7 +182,10 @@ final class Talk: ObservableObject {
 
     /// Twenty times a second: is he talking, compared with the room? Has he finished? Is he cutting in?
     private func tick() {
-        guard session else { return }
+        if !session {
+            if standby { level = latest; standbyTick() }
+            return
+        }
         let lv = latest
         level = lv
         // the room's level follows quickly when it gets quieter, slowly when louder: a steady TV becomes the floor
@@ -269,7 +346,8 @@ final class Talk: ObservableObject {
                     "change_setting": "change a setting"]
         if let a = acts[name] { return "Asked the Command Centre to " + a }
         let checks = ["server_status": "the server", "current_time": "the time", "thinking": "it through carefully",
-                      "web_search": "the web", "weather": "the weather", "news": "the news", "car": "the car"]
+                      "web_search": "the web", "weather": "the weather", "news": "the news", "car": "the car",
+                      "notes": "what I noticed", "memory": "my memory"]
         return "Checked " + (checks[name] ?? name.replacingOccurrences(of: "_", with: " "))
     }
 

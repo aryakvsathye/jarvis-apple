@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.0 (17 Nov 2026)
+Say "JARVIS" and he's listening: no tap needed
+- ⋯ → Stand By for "JARVIS": the app listens on the phone itself for his name (on-phone recognition, nothing sent anywhere until you've said it), then starts a conversation; when it ends, he stands by again. It stays on across launches, and keeps going with the app in the background (iOS shows the microphone dot)
+- New labels for JARVIS 1.0: "Checked what I noticed" when he tells you what happened while you were away, and "Checked my memory"
+
 ## 0.4.0 (17 Nov 2026)
 JARVIS reads your car: every trip, straight from the OBD-II adapter
 - ⋯ → Car: choose the adapter once, with the car on. iOS then connects to it by itself whenever the car is on, even with the app closed
